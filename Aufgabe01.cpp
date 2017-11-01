@@ -36,10 +36,8 @@ namespace
 
         void execute( const Algorithm::Options& options, const volatile bool& /*abortFlag*/ ) override
         {
-            //int numberOfPoints = 8;
-            //int tensorField[numberOfPoints];
+            size_t numberOfCells = 4;
 
-            // points for hexahedron
             // floor
             Tensor<double, 3> p0(0.0, 0.0, 0.0);
             Tensor<double, 3> p1(1.0, 0.0, 0.0);
@@ -50,35 +48,43 @@ namespace
             Tensor<double, 3> p5(1.0, 1.0, 1.0);
             Tensor<double, 3> p6(1.0, 0.0, 1.0);
             Tensor<double, 3> p7(0.0, 0.0, 1.0);
-
             // roof
             Tensor<double, 3> p8(0.5, 0.5, 1.5);
+            // flag
+            Tensor<double, 3> p9(0.5, 0.5, 1.7);
+            Tensor<double, 3> p10(0.5, 0.7, 1.66);
+            Tensor<double, 3> p11(0.5, 0.5, 1.6);
 
+            std::vector<Tensor<double, 3>> myHouse;
 
-            std::vector<Tensor<double, 3>> myHexahedron;
+            myHouse.push_back(p0);
+            myHouse.push_back(p1);
+            myHouse.push_back(p2);
+            myHouse.push_back(p3);
+            myHouse.push_back(p4);
+            myHouse.push_back(p5);
+            myHouse.push_back(p6);
+            myHouse.push_back(p7);
+            myHouse.push_back(p8);
+            myHouse.push_back(p9);
+            myHouse.push_back(p10);
+            myHouse.push_back(p11);
 
-            myHexahedron.push_back(p0);
-            myHexahedron.push_back(p1);
-            myHexahedron.push_back(p2);
-            myHexahedron.push_back(p3);
-            myHexahedron.push_back(p4);
-            myHexahedron.push_back(p5);
-            myHexahedron.push_back(p6);
-            myHexahedron.push_back(p7);
-            myHexahedron.push_back(p8);
+            for (std::vector<Tensor<double,3 > >::const_iterator i = myHouse.begin(); i != myHouse.end(); ++i)
+                debugLog() << *i << ' ' ; // shows me the tensors
 
-            //for (std::vector<Tensor<double,3 > >::const_iterator i = myHexahedron.begin(); i != myHexahedron.end(); ++i)
-            //    debugLog() << *i << ' ' ; // shows me the tensors
+            std::shared_ptr< const DiscreteDomain< 3 > > myDomain = DomainFactory::makeDomainArbitrary(std::move(myHouse), Precision::UINT64);
 
-            std::shared_ptr< const DiscreteDomain< 3 > > myDomain = DomainFactory::makeDomainArbitrary(std::move(myHexahedron), Precision::UINT64);
+            std::vector< size_t > pointsToDraw({0,1,2,3,4,5,6,7, 7,6,5,4,8, 8,9, 9,11,10});
 
-            std::vector< size_t > pointsToDraw({0,1,2,3,4,5,6,7, 7,6,5,4,8});
+            std::pair<Cell::Type, size_t> cellCounts[numberOfCells];
 
-            std::pair<Cell::Type, size_t> cellCounts[1];
             cellCounts[0] = std::pair<Cell::Type, size_t> (Cell::HEXAHEDRON, 1);
             cellCounts[1] = std::pair<Cell::Type, size_t> (Cell::PYRAMID, 1);
+            cellCounts[2] = std::pair<Cell::Type, size_t> (Cell::LINE, 1);
+            cellCounts[3] = std::pair<Cell::Type, size_t> (Cell::TRIANGLE, 1);
 
-            std::shared_ptr< const Grid< 3 > > myGrid = DomainFactory::makeGridUnstructured( *myDomain, 2, cellCounts, pointsToDraw);
+            std::shared_ptr< const Grid< 3 > > myGrid = DomainFactory::makeGridUnstructured( *myDomain, numberOfCells, cellCounts, pointsToDraw);
             setResult("grid", myGrid);
 
             debugLog() << std::endl;
