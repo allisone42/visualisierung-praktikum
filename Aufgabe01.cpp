@@ -26,7 +26,7 @@ namespace
                 {
                     int number = std::max(i, 0);
 
-                    // at least 4 houses
+                    //check if number typed in was at least 4
                     if (number >= 4)
                         return number;
                     else return 4;
@@ -49,46 +49,31 @@ namespace
 
             void execute(const Algorithm::Options& options, const volatile bool& /*abortFlag*/) override
             {
+                //getting number of houses from users options
                 int numberOfHouses = options.get< int >("Number of houses");
+
+                //distance between the houses
                 const double DISTANCE = 3.0;
+
+                //cell types are hexadedron, pyramid, line, triangle
                 const size_t NUMBEROFCELLTYPES = 4;
 
-                // vector consisting of data points
+                //vector consisting of data point Tensors
                 std::vector<Tensor<double, 3>> points;
-                // indices of points
+
+                //indices of points
                 std::vector<size_t> indices;
 
-                // create levels (Hexadedrons)
+                //create levels (hexadedrons)
                 for (int i = 0; i < numberOfHouses; i++) {
                     int shift = i * DISTANCE;
-
-                    // floor
-                    Tensor<double, 3> p0(0.0, 0.0 + shift, 0.0);
-                    Tensor<double, 3> p1(1.0, 0.0 + shift, 0.0);
-                    Tensor<double, 3> p2(1.0, 1.0 + shift, 0.0);
-                    Tensor<double, 3> p3(0.0, 1.0 + shift, 0.0);
-
-                    // level
-                    Tensor<double, 3> p4(0.0, 1.0 + shift, 1.0);
-                    Tensor<double, 3> p5(1.0, 1.0 + shift, 1.0);
-                    Tensor<double, 3> p6(1.0, 0.0 + shift, 1.0);
-                    Tensor<double, 3> p7(0.0, 0.0 + shift, 1.0);
-
-                    points.push_back(p0);
-                    points.push_back(p1);
-                    points.push_back(p2);
-                    points.push_back(p3);
-                    points.push_back(p4);
-                    points.push_back(p5);
-                    points.push_back(p6);
-                    points.push_back(p7);
-
+                    points = createHexadedron(points, shift);
                     for(int j = 0; j < 8; j++) {
                         indices.push_back(j + (i * 8));
                     }
                 }
 
-                // roofs (pyramids)
+                //create roofs (pyramids)
                 for (int i = 0; i < numberOfHouses; i++) {
                     int shift = i * DISTANCE;
 
@@ -102,7 +87,7 @@ namespace
                     indices.push_back(8 * numberOfHouses + i);
                 }
 
-                // poles (lines)
+                //create poles (lines)
                 for (int i = 0; i < numberOfHouses; i++) {
                     int shift = i * DISTANCE;
 
@@ -114,7 +99,7 @@ namespace
                     indices.push_back(9 * numberOfHouses + i);
                 }
 
-                // flags (triangles)
+                //create flags (triangles)
                 for (int i = 0; i < numberOfHouses; i++) {
                     int shift = i * DISTANCE;
 
@@ -153,6 +138,34 @@ namespace
 
                 // show grid
                 setResult("grid", myGrid);
+            }
+
+        private:
+
+
+            std::vector<Tensor<double, 3>> createHexadedron(std::vector<Tensor<double, 3>> points, int shift)
+            {
+                // floor
+                Tensor<double, 3> p0(0.0, 0.0 + shift, 0.0);
+                Tensor<double, 3> p1(1.0, 0.0 + shift, 0.0);
+                Tensor<double, 3> p2(1.0, 1.0 + shift, 0.0);
+                Tensor<double, 3> p3(0.0, 1.0 + shift, 0.0);
+
+                // level
+                Tensor<double, 3> p4(0.0, 1.0 + shift, 1.0);
+                Tensor<double, 3> p5(1.0, 1.0 + shift, 1.0);
+                Tensor<double, 3> p6(1.0, 0.0 + shift, 1.0);
+                Tensor<double, 3> p7(0.0, 0.0 + shift, 1.0);
+
+                points.push_back(p0);
+                points.push_back(p1);
+                points.push_back(p2);
+                points.push_back(p3);
+                points.push_back(p4);
+                points.push_back(p5);
+                points.push_back(p6);
+                points.push_back(p7);
+                return points;
             }
         };
 
