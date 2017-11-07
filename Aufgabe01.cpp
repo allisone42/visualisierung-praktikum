@@ -29,7 +29,9 @@ namespace
                     //check if number typed in was at least 4
                     if (number >= 4)
                         return number;
-                    else return 4;
+                    else {
+                        return 4;
+                    }
                 }
             };
 
@@ -127,9 +129,6 @@ namespace
                 cellCounts[2] = lines;
                 cellCounts[3] = triangles;
 
-//                for (std::vector<size_t>::const_iterator i = indices.begin(); i != indices.end(); ++i)
-//                    std::cout << *i << ' ' ; // log tensors
-
                 // create 3 dimensional Domain
                 std::shared_ptr< const DiscreteDomain< 3 > > myDomain = DomainFactory::makeDomainArbitrary(points, Precision::UINT64);
 
@@ -141,7 +140,6 @@ namespace
             }
 
         private:
-
 
             std::vector<Tensor<double, 3>> createHexadedron(std::vector<Tensor<double, 3>> points, int shift)
             {
