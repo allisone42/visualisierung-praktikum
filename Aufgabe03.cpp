@@ -42,6 +42,7 @@ namespace
 
         void execute( const Algorithm::Options& options, const volatile bool& /* abortFlag */ ) override
         {
+            //make sphere data adjustable
             mGlyphs = getGraphics("Spheres").makePrimitive();
             std::shared_ptr< const TensorFieldDiscrete < Scalar > > field = options.get< TensorFieldDiscrete < Scalar > >("Field");
 
@@ -75,8 +76,15 @@ namespace
             double radius = options.get< double >("Radius");
             double radiusToDraw;
             for (auto& p : valuesToDraw) {
-                if (options.get< bool >("Scale")) radiusToDraw = p.first * radius;
-                else radiusToDraw = radius;
+                if (options.get< bool >("Scale"))
+                {
+                    radiusToDraw = p.first * radius;
+                }
+                else
+                {
+                    radiusToDraw = radius;
+                }
+
                 mGlyphs->add(Primitive::POINTS).setPointSize(radiusToDraw).setColor(color).setVertices(p.second);
             }
         }
