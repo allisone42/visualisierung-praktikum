@@ -22,7 +22,7 @@ namespace
         {
             Options( Control& control ) : VisAlgorithm::Options( control )
             {
-                add< Grid < 3 > >("Grid", "Zu zeichnendes Grid" );
+                add< Grid < 3 > >("Grid", "Grid to draw" );
                 add< Color >("Color", "Drawing color", Color(0.75, 0.75, 0.0));
                 add< bool >("Show single cell", "Show single cell only", false);
                 add< unsigned int >("Number of cell", "Number of single cell", 0);
@@ -75,7 +75,7 @@ namespace
                 sides.push_back(std::vector<int>({7,0,1,6}));
                 sides.push_back(std::vector<int>({6,5,4,7}));
 
-                //Eckpunkte raussuchen und als Quadratpunkte fürs zeichnen speichern
+                //get vertices and save for drawing
                 for (unsigned int i = 0; i < sides.size(); i++) {
                     for (unsigned int j = 0; j < sides[i].size(); j++) {
                         vertices.push_back(points[c.index(sides[i][j])]);
@@ -109,21 +109,11 @@ namespace
                 mGlyphs->add(Primitive::TRIANGLES).setColor(color).setVertices(vertices);
                 break;
             }
-            case Cell::Type::QUAD: {
-                std::vector<Vector3> bottomVertices;
-                bottomVertices.push_back(points[c.index(0)]);
-                bottomVertices.push_back(points[c.index(1)]);
-                bottomVertices.push_back(points[c.index(2)]);
-                bottomVertices.push_back(points[c.index(3)]);
-                mGlyphs->add(Primitive::QUADS).setColor(Color(1 - color.r(), 1 - color.g(), 1 - color.b())).setVertices(bottomVertices);
-                break;
-            }
             case Cell::Type::TRIANGLE: {
                 std::vector<Vector3> vertices;
                 vertices.push_back(points[c.index(0)]);
                 vertices.push_back(points[c.index(1)]);
                 vertices.push_back(points[c.index(2)]);
-
                 mGlyphs->add(Primitive::TRIANGLES).setColor(color).setVertices(vertices);
                 break;
             }
@@ -131,7 +121,6 @@ namespace
                 std::vector<Vector3> vertices;
                 vertices.push_back(points[c.index(0)]);
                 vertices.push_back(points[c.index(1)]);
-
                 mGlyphs->add(Primitive::LINES).setColor(color).setVertices(vertices);
                 break;
             }
@@ -170,5 +159,3 @@ namespace
 
     AlgorithmRegister< VisCityAlgorithm > reg("VisPraktikum/Aufgabe02", "Draws a nice city");
 }
-
-
